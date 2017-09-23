@@ -2976,8 +2976,19 @@ struct TagsResponse {
     items: Vec<String>,
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub struct UsernameCheckQuery {
+    pub username: String,
+}
+
+impl UsernameCheckQuery {
+    pub fn new(username: String) -> Self {
+        Self { username: username }
+    }
+}
+
 #[derive(Deserialize, Debug, Clone)]
-enum UsernameCheckResult {
+pub enum UsernameCheckResult {
     Available,
     NotAvailable,
     TooShort,
@@ -2986,14 +2997,14 @@ enum UsernameCheckResult {
 }
 
 #[derive(Deserialize, Debug, Clone)]
-struct UsernameCheckResponse {
+pub struct UsernameCheckResponse {
     /// Will be Available if the username is available to register, or
     /// NotAvailable if used by another member (or attached to a deactivated
     /// account, or otherwise reserved). May return an appropriate error value
     /// if the username doesn’t meet Letterboxd’s requirements: Usernames must
     /// be between 2 and 15 characters long and may only contain upper or
     /// lowercase letters, numbers or the underscore (_) character.
-    result: UsernameCheckResult,
+    pub result: UsernameCheckResult,
 }
 
 #[derive(Serialize, Debug, Clone)]

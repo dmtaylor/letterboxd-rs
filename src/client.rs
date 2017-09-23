@@ -78,6 +78,20 @@ impl Client {
 
     //     /auth/username-check
 
+    GET!(
+        /// Check if a username is available to register.
+        ///
+        /// Use this endpoint to check the validity and availability of a given username.
+        /// Usernames must be between 2 and 15 characters long and may only contain upper or
+        /// lowercase letters, numbers or the underscore (_) character. Usernames associated with
+        /// deactivated accounts are not automatically released to the pool of available names (
+        /// members will need to contact Letterboxd Support for assistance).
+        username_check,
+        "auth/username-check",
+        defs::UsernameCheckQuery,
+        defs::UsernameCheckResponse
+    );
+
     // comment
 
     //     /comment/{id}
@@ -92,9 +106,9 @@ impl Client {
 
     GET!(
         /// A cursored window over the list of films.
-        // Use the ‘next’ cursor to move through the list. The response will include the film
-        // relationships for the signed-in member and the member indicated by the member LID if
-        // specified.
+        /// Use the ‘next’ cursor to move through the list. The response will include the film
+        /// relationships for the signed-in member and the member indicated by the member LID if
+        /// specified.
         films,
         "films",
         defs::FilmsRequest,

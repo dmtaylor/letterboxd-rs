@@ -177,3 +177,26 @@ fn search() {
 
     core.run(do_search.and_then(do_check)).unwrap();
 }
+
+#[test]
+#[ignore]
+fn username_check() {
+    let api_key = env::var("API_KEY").unwrap_or_else(usage_and_exit);
+    let api_secret = env::var("API_SECRET").unwrap_or_else(usage_and_exit);
+
+    let mut core = Core::new().unwrap();
+    let client = letterboxd::Client::new(&core.handle(), api_key, api_secret);
+
+    let req = letterboxd::UsernameCheckQuery::new(String::from("box_dot"));
+    let do_req = client.username_check(&req, None);
+
+    let do_check = |resp: letterboxd::UsernameCheckResponse| {
+        match resp.result {
+            letterboxd::UsernameCheckResult::NotAvailable => assert!(true),
+            _ => assert!(false),
+        }
+        Ok(())
+    };
+
+    core.run(do_req.and_then(do_check)).unwrap();
+}
