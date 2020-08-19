@@ -76,7 +76,10 @@
 mod client;
 mod defs;
 mod error;
+mod film;
 
 pub use client::{ApiKeyPair, Client};
 pub use defs::*;
+pub use film::defs::*;
+//pub use film::client::*;
 pub use error::{Error, Result};

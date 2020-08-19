@@ -1,5 +1,6 @@
 use crate::defs;
 use crate::error::{Error, Result};
+// use crate::film;
 
 use futures::stream::StreamExt;
 use hyper::{
@@ -155,74 +156,6 @@ impl Client {
     }
 
     // API endpoints
-
-    // film
-
-    /// A cursored window over the list of films.
-    ///
-    /// Use the ‘next’ cursor to move through the list. The response will include the film
-    /// relationships for the signed-in member and the member indicated by the member LID if
-    /// specified.
-    pub async fn films(&self, request: &defs::FilmsRequest) -> Result<defs::FilmsResponse> {
-        self.get_with_query("films", request).await
-    }
-
-    /// Get a list of services supported by the /films endpoint.
-    ///
-    /// Services are returned in alphabetical order. Some services are only available to paying
-    /// members, so results will vary based on the authenticated member’s status.
-    pub async fn film_services(&self) -> Result<defs::FilmServicesResponse> {
-        self.get("films/film-services").await
-    }
-
-    /// Get a list of genres supported by the `films` function.
-    ///
-    /// Genres are returned in alphabetical order.
-    pub async fn film_genres(&self) -> Result<defs::GenresResponse> {
-        self.get("films/genres").await
-    }
-
-    /// Get details about a film by ID.
-    pub async fn film(&self, id: &str) -> Result<defs::Film> {
-        self.get(&format!("film/{}", id)).await
-    }
-
-    /// Get availability data about a film by ID.
-    pub async fn film_availability(&self, id: &str) -> Result<defs::FilmAvailabilityResponse> {
-        self.get(&format!("film/{}/availability", id)).await
-    }
-
-    /// Get details of the authenticated member’s relationship with a film by ID.
-    pub async fn film_relationship(&self, id: &str) -> Result<defs::FilmAvailabilityResponse> {
-        self.get(&format!("film/{}/me", id)).await
-    }
-
-    /// Update the authenticated member’s relationship with a film by ID.
-    pub async fn update_film_relationship(
-        &self,
-        id: &str,
-        request: &defs::FilmRelationshipUpdateRequest,
-    ) -> Result<defs::FilmRelationshipUpdateResponse> {
-        self.patch(&format!("film/{}/me", id), request).await
-    }
-
-    /// Get details of the authenticated member’s relationship with a film by ID.
-    pub async fn film_relationship_members(
-        &self,
-        id: &str,
-        request: &defs::MemberFilmRelationshipsRequest,
-    ) -> Result<defs::MemberFilmRelationshipsResponse> {
-        self.get_with_query(&format!("film/{}/members", id), request)
-            .await
-    }
-
-    //     /film/{id}/report
-
-    /// Get statistical data about a film by ID.
-    pub async fn film_statistics(&self, id: &str) -> Result<defs::FilmStatistics> {
-        self.get(&format!("film/{}/statistics", id)).await
-    }
-
     // list
 
     /// A cursored window over a list of lists.
@@ -318,7 +251,7 @@ impl Client {
 
     // request helper
 
-    async fn get<R>(&self, endpoint_path: &str) -> Result<R>
+    pub(crate) async fn get<R>(&self, endpoint_path: &str) -> Result<R>
     where
         R: DeserializeOwned + 'static,
     {
@@ -326,7 +259,7 @@ impl Client {
             .await
     }
 
-    async fn get_with_query<Q, R>(&self, endpoint_path: &str, query: &Q) -> Result<R>
+    pub(crate) async fn get_with_query<Q, R>(&self, endpoint_path: &str, query: &Q) -> Result<R>
     where
         Q: Serialize,
         R: DeserializeOwned + 'static,
@@ -335,7 +268,7 @@ impl Client {
             .await
     }
 
-    async fn patch<B, R>(&self, endpoint_path: &str, body: &B) -> Result<R>
+    pub(crate) async fn patch<B, R>(&self, endpoint_path: &str, body: &B) -> Result<R>
     where
         B: Serialize,
         R: DeserializeOwned + 'static,
@@ -344,7 +277,7 @@ impl Client {
             .await
     }
 
-    async fn post<B, R>(&self, endpoint_path: &str, body: &B) -> Result<R>
+    pub(crate) async fn post<B, R>(&self, endpoint_path: &str, body: &B) -> Result<R>
     where
         B: Serialize,
         R: DeserializeOwned + 'static,
@@ -353,7 +286,7 @@ impl Client {
             .await
     }
 
-    async fn delete(&self, endpoint_path: &str) -> Result<()> {
+    pub(crate) async fn delete(&self, endpoint_path: &str) -> Result<()> {
         self.request_bytes::<()>(Method::DELETE, endpoint_path, None, None, None)
             .await?;
         Ok(())
